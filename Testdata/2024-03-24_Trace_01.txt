@@ -1,0 +1,28 @@
+
+Traceroute zu einem Nameserver in Detroit
+
+C:\Users\ChristianRi>tracert 35.128.46.58
+
+Tracing route to 35.128.46.58 over a maximum of 30 hops
+
+  1     1 ms    <1 ms     1 ms  fritz.box [192.168.178.1]
+  2     4 ms     1 ms     2 ms  lb0.cisco15-th.bitel.net [212.100.40.90]
+  3     3 ms     3 ms     1 ms  185.48.244.210
+  4    11 ms    10 ms     9 ms  185.48.244.138
+  5    12 ms     8 ms     9 ms  be5388.agr21.fra06.atlas.cogentco.com [149.14.209.49]
+  6    10 ms     9 ms     9 ms  be2844.rcr22.fra06.atlas.cogentco.com [130.117.0.29]
+  7    10 ms    10 ms    10 ms  be2846.ccr42.fra03.atlas.cogentco.com [154.54.37.29]
+  8    19 ms    17 ms    15 ms  be2814.ccr42.ams03.atlas.cogentco.com [130.117.0.141]
+  9   108 ms   108 ms   109 ms  be12488.ccr42.lon13.atlas.cogentco.com [130.117.51.41]
+ 10   110 ms   110 ms   110 ms  be3488.ccr52.lhr01.atlas.cogentco.com [154.54.60.14]
+ 11   110 ms   108 ms   108 ms  be4283.ccr32.bos01.atlas.cogentco.com [154.54.47.145]
+ 12   108 ms   108 ms   108 ms  be3600.ccr22.alb02.atlas.cogentco.com [154.54.0.221]
+ 13   108 ms   108 ms   108 ms  be2879.ccr22.cle04.atlas.cogentco.com [154.54.29.173]
+ 14   110 ms   108 ms   111 ms  be2718.ccr42.ord01.atlas.cogentco.com [154.54.7.129]
+ 15   110 ms   108 ms   108 ms  be2766.ccr41.ord03.atlas.cogentco.com [154.54.46.178]
+ 16   110 ms   108 ms   111 ms  38.142.64.35
+ 17   117 ms   116 ms   115 ms  209.165.240.9
+ 18   119 ms   117 ms   116 ms  ae0.cr01.rpdc.det.mi.rocketfiber.net [35.128.0.34]
+ 19   115 ms   115 ms   114 ms  35.128.46.58
+
+Trace complete.

@@ -1,0 +1,23 @@
+
+Traceroute Webseite von cia.gov
+
+pi@demo-pi1:~ $ sudo traceroute -I cia.gov
+traceroute to cia.gov (104.91.105.149), 30 hops max, 60 byte packets
+ 1  192.168.1.1 (192.168.1.1)  0.678 ms  0.607 ms  0.428 ms
+ 2  * * *
+ 3  * * *
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ 7  * * *
+ 8  80.156.5.67 (80.156.5.67)  47.813 ms  50.525 ms  47.467 ms
+ 9  h-sb1-i.H.DE.NET.DTAG.DE (62.154.50.173)  47.281 ms  47.102 ms  53.604 ms
+10  d-sb1-i.D.DE.NET.DTAG.DE (217.5.92.65)  154.664 ms  154.494 ms  154.308 ms
+11  ams-sb6-i.AMS.NL.NET.DTAG.DE (62.154.15.134)  157.028 ms  156.913 ms  133.462 ms
+12  nyc-sb6-i.NYC.US.NET.DTAG.DE (62.154.5.206)  139.106 ms  138.922 ms  138.578 ms
+13  ae40.r01.ewr01.icn.netarch.akamai.com (23.193.112.223)  129.283 ms  132.267 ms  132.098 ms
+14  ae8.r01.bos02.icn.netarch.akamai.com (23.32.62.64)  151.429 ms  147.754 ms  131.450 ms
+15  ae8.r01.bos01.ien.netarch.akamai.com (23.203.149.43)  141.091 ms  140.966 ms  138.493 ms
+16  ae2.ecx-bos3.netarch.akamai.com (23.203.149.133)  257.423 ms  237.982 ms  234.738 ms
+17  a104-91-105-149.deploy.static.akamaitechnologies.com (104.91.105.149)  146.371 ms  146.196 ms  140.707 ms
+pi@demo-pi1:~ $

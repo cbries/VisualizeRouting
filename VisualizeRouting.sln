@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34707.107
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Traceroute", "Traceroute\Traceroute.csproj", "{4C824034-E96C-4179-9E70-0F2F123ACD6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualizeRoutingWpf", "VisualizeRoutingWpf.csproj", "{EEB73CEF-B28F-42ED-B93B-89853E1ABF58}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4C824034-E96C-4179-9E70-0F2F123ACD6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C824034-E96C-4179-9E70-0F2F123ACD6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C824034-E96C-4179-9E70-0F2F123ACD6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C824034-E96C-4179-9E70-0F2F123ACD6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEB73CEF-B28F-42ED-B93B-89853E1ABF58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEB73CEF-B28F-42ED-B93B-89853E1ABF58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEB73CEF-B28F-42ED-B93B-89853E1ABF58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB73CEF-B28F-42ED-B93B-89853E1ABF58}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {715EF66C-7E4C-4216-9A5A-51650273E009}
+	EndGlobalSection
+EndGlobal
