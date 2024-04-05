@@ -312,7 +312,7 @@ namespace VisualizeRoutingWpf
         private void PlotCoords(Dictionary<string, List<IpInfo>> fileCoords)
         {
             var idxColor = 0;
-            
+
             foreach (var it in fileCoords)
             {
                 var name = it.Key;
@@ -402,15 +402,16 @@ namespace VisualizeRoutingWpf
         }
 
         private SynchronizationContext _uiCtx;
+        private bool _initialized;
 
         private void MainWindow_OnInitialized(object sender, EventArgs e)
         {
             _uiCtx = SynchronizationContext.Current;
 
             InitMap();
-            
+
             LoadGpsInfoCacheData();
-            
+
             TracerouteInstance.Started += TracerouteInstanceOnStarted;
             TracerouteInstance.Hopped += TracerouteInstanceOnHopped;
             TracerouteInstance.Stopped += TracerouteInstanceOnStopped;
@@ -420,6 +421,8 @@ namespace VisualizeRoutingWpf
             TxtHost.KeyUp += TxtHostOnKeyUp;
 
             RunTestmode();
+
+            _initialized = true;
         }
 
         private void TxtHostOnKeyUp(object sender, KeyEventArgs e)
@@ -454,6 +457,12 @@ namespace VisualizeRoutingWpf
 
         private void TracerouteInstanceOnStarted(object sender)
         {
+            _uiCtx.Post(o =>
+            {
+                _wBeforeRun = Width;
+                _hBeforeRun = Height;
+            }, null);
+
             _traceRunning = true;
             IsLoading = true;
 
@@ -478,20 +487,25 @@ namespace VisualizeRoutingWpf
             StatusMessage = "Stopped";
         }
 
+        private double _wBeforeRun;
+        private double _hBeforeRun;
+
         private async void TracerouteInstanceOnHopped(object sender, int ttl, long ms, IPAddress ip)
         {
             if (ip == null) return;
             var ips = ip.ToString();
-            
+
             var instance = sender as Traceroute;
             if (instance == null) return;
 
             var ipCoord = await GetCoords(new Dictionary<string, List<string>>()
             {
-                { instance.Host, new List<string>() { ips } }
+                { instance.Host, new List<string> { ips } }
             });
 
             var values = ipCoord[instance.Host];
+            if (values.Count == 0) return;
+
             var lat = values[0].Latitude;
             var lng = values[0].Longitude;
 
@@ -499,7 +513,6 @@ namespace VisualizeRoutingWpf
 
             _uiCtx.Post(o =>
             {
-
                 var pLatLng = new PointLatLng(lat, lng);
                 var m = new GMapMarker(pLatLng);
                 m.Shape = new Marker(this, m, GetHighlightText(values[0]));
@@ -518,8 +531,11 @@ namespace VisualizeRoutingWpf
 
                 MapControl.InvalidateVisual(true);
 
-                var w = (int)Width;
-                var h = (int)Height;
+                var w = (int)_wBeforeRun;
+                var h = (int)_hBeforeRun;
+
+                Trace.WriteLine($"Geometry: {w} x {h}");
+
                 MapControl.InitializeForBackgroundRendering(w, h);
 
             }, null);
@@ -562,6 +578,16 @@ namespace VisualizeRoutingWpf
             field = value;
             OnPropertyChanged(propertyName);
             return true;
+        }
+
+        private void MainWindow_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_initialized)
+            {
+                MapControl.InvalidateVisual(true);
+                MapControl.Width = RenderSize.Width;
+                MapControl.Height = RenderSize.Height;
+            }
         }
     }
 }

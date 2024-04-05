@@ -9,7 +9,9 @@
     Width="1536"
     Height="1194"
     Initialized="MainWindow_OnInitialized"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    SizeChanged="MainWindow_OnSizeChanged"
+    >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -60,7 +62,6 @@
             Grid.Row="1"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch" />
-
 
         <StatusBar Grid.Row="2">
             <ProgressBar
