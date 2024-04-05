@@ -97,6 +97,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ExceptionUtilities.cs" />
     <Compile Include="IpInfo.cs" />
     <Compile Include="Route.cs" />
     <Compile Include="Traceroute.cs" />

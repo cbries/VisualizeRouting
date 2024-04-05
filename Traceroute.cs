@@ -2,15 +2,15 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Windows.Forms;
 
 namespace VisualizeRoutingWpf
 {
     public delegate void TracerouteStarted(object sender);
-
     public delegate void TracerouteHopped(object sender, int ttl, long ms, IPAddress ip);
-
     public delegate void TracerouteStopped(object sender);
     public delegate void TracerouteTimeout(object sender);
+    public delegate void TracerouteFailed(object sender, string message);
 
     public class Traceroute
     {
@@ -18,15 +18,39 @@ namespace VisualizeRoutingWpf
         public event TracerouteHopped Hopped;
         public event TracerouteStopped Stopped;
         public event TracerouteTimeout Timeout;
+        public event TracerouteFailed Failed;
 
         public string Host { private set; get; }
+
+        private IPAddress GetIpAddress(string ipOrHost)
+        {
+            try
+            {
+                var listOfDns = Dns.GetHostAddresses(ipOrHost);
+                if (listOfDns.Length == 0) return IPAddress.None;
+                return listOfDns[0];
+            }
+            catch (Exception ex)
+            {
+                Failed?.Invoke(this, ex.GetExceptionMessages());
+            }
+
+            return IPAddress.None;
+        }
 
         public void ExecuteTraceroute(string ipAddressOrHostName, TimeSpan walltime)
         {
             var end = DateTime.Now + walltime;
 
+            Started?.Invoke(this);
+
             Host = ipAddressOrHostName;
-            var ipAddress = Dns.GetHostAddresses(ipAddressOrHostName)[0];
+            var ipAddress = GetIpAddress(ipAddressOrHostName);
+            if (ipAddress == IPAddress.None)
+            {
+                MessageBox.Show($@"Unknown host: {ipAddressOrHostName}", $@"Stopped", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Stopped?.Invoke(this);
+            }
             var pingSender = new Ping();
             var pingOptions = new PingOptions();
             var stopWatch = new Stopwatch();
@@ -35,9 +59,7 @@ namespace VisualizeRoutingWpf
             pingOptions.DontFragment = true;
             pingOptions.Ttl = 1;
             var maxHops = 30;
-
-            Started?.Invoke(this);
-
+            
             try
             {
                 for (var i = 1; i < maxHops + 1; i++)

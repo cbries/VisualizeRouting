@@ -14,6 +14,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
         <TextBox
@@ -60,5 +61,18 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch" />
 
+
+        <StatusBar Grid.Row="2">
+            <ProgressBar
+                Width="200"
+                Height="12"
+                Margin="3"
+                HorizontalAlignment="Right"
+                Background="DarkGray"
+                IsIndeterminate="{Binding IsLoading}" />
+            <TextBlock Text="{Binding StatusMessage}" />
+            <Separator />
+            <TextBlock Text="https://github.com/cbries/VisualizeRouting" />
+        </StatusBar>
     </Grid>
 </Window>

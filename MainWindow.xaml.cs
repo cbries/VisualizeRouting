@@ -13,8 +13,11 @@ using System.Text;
 using GMap.NET.WindowsPresentation;
 using Newtonsoft.Json;
 using GMapMarker = GMap.NET.WindowsPresentation.GMapMarker;
-using static GMap.NET.Entity.OpenStreetMapRouteEntity;
 using System.Threading;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace VisualizeRoutingWpf
 {
@@ -39,8 +42,32 @@ namespace VisualizeRoutingWpf
 
     public class Map : GMapControl { }
 
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        protected void Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            field = value;
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetField(ref _isLoading, value);
+        }
+
+        private string _statusMessage;
+
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set => SetField(ref _statusMessage, value);
+        }
+
         // Fallback for local IP addresses is Bielefeld.
         private const double StartLatitude = 52.016;
         private const double StartLongitude = 8.51;
@@ -263,6 +290,10 @@ namespace VisualizeRoutingWpf
         public MainWindow()
         {
             InitializeComponent();
+
+            this.DataContext = this;
+
+            StatusMessage = "Loaded";
         }
 
         private static List<System.Windows.Media.Brush> Brushes = new List<System.Windows.Media.Brush>()
@@ -330,11 +361,23 @@ namespace VisualizeRoutingWpf
         {
             if (_traceRunning)
             {
-                MessageBox.Show("Trace is running!", "Traceroute", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Trace is running!", "Traceroute", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var host = TxtHost.Text.Trim();
+            var host = TxtHost.Text?.Trim();
+
+            if (string.IsNullOrEmpty(host))
+            {
+                System.Windows.MessageBox.Show("No host entered.", "Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var idx = host.LastIndexOf('.');
+            if (idx == -1)
+                host += ".de";
+
+            StatusMessage = $"Trace: {host}";
 
             _traceTask = System.Threading.Tasks.Task.Run(() =>
             {
@@ -372,15 +415,37 @@ namespace VisualizeRoutingWpf
             TracerouteInstance.Hopped += TracerouteInstanceOnHopped;
             TracerouteInstance.Stopped += TracerouteInstanceOnStopped;
             TracerouteInstance.Timeout += TracerouteInstanceOnTimeout;
+            TracerouteInstance.Failed += TracerouteInstanceOnFailed;
+
+            TxtHost.KeyUp += TxtHostOnKeyUp;
 
             RunTestmode();
+        }
+
+        private void TxtHostOnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                Button_Click(null, new RoutedEventArgs());
+        }
+
+        private void TracerouteInstanceOnFailed(object sender, string message)
+        {
+            _traceRunning = false;
+            IsLoading = false;
+
+            Trace.WriteLine($"{message}");
+            System.Windows.MessageBox.Show(message, "Trace Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            StatusMessage = "Failed";
         }
 
         private void TracerouteInstanceOnTimeout(object sender)
         {
             _traceRunning = false;
+            IsLoading = false;
 
             Trace.WriteLine("###");
+
+            StatusMessage = "Timeout";
         }
 
         private bool _traceRunning = false;
@@ -390,6 +455,7 @@ namespace VisualizeRoutingWpf
         private void TracerouteInstanceOnStarted(object sender)
         {
             _traceRunning = true;
+            IsLoading = true;
 
             ++_colorIndex;
             if (_colorIndex >= Brushes.Count)
@@ -398,13 +464,18 @@ namespace VisualizeRoutingWpf
             _currentTraceRoute = null;
 
             Trace.WriteLine("+++");
+
+            StatusMessage = "Started";
         }
 
         private void TracerouteInstanceOnStopped(object sender)
         {
             _traceRunning = false;
+            IsLoading = false;
 
             Trace.WriteLine("---");
+
+            StatusMessage = "Stopped";
         }
 
         private async void TracerouteInstanceOnHopped(object sender, int ttl, long ms, IPAddress ip)
@@ -476,6 +547,21 @@ namespace VisualizeRoutingWpf
 
                 _traceTask = null;
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }
